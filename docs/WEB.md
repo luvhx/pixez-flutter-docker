@@ -33,7 +33,7 @@ docker compose up -d --build
 | --- | --- | --- |
 | `PIXEZ_PORT` | `8080` | 宿主机映射端口 |
 | `PIXEZ_TAG` | `latest` | 构建出的镜像 tag |
-| `FLUTTER_VERSION` | `stable` | 构建时使用的 Flutter 镜像 tag，可固定为 `3.47.7` |
+| `FLUTTER_VERSION` | `3.47.7` | Docker 构建时下载的 Flutter SDK 版本（需满足 Dart ≥ 3.11.5）|
 | `TZ` | `Asia/Shanghai` | 容器时区 |
 
 其它命令：
@@ -71,7 +71,7 @@ docker run -d --name pixez-web -p 8080:80 ghcr.io/luvhx/pixez-flutter:latest
 若希望匿名拉取，在 GitHub 的
 `Packages → pixez-flutter → Package settings` 中把可见性改为 **Public**。
 
-手动触发时还可以指定 Flutter 版本（例如固定 `3.47.7`）以及是否推送镜像。
+手动触发时还可以指定 Flutter SDK 版本（默认 `3.47.7`）以及是否推送镜像。
 
 ## 本地构建（不使用 Docker）
 

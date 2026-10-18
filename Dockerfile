@@ -3,24 +3,46 @@
 # ---------------------------------------------------------------------------
 # Build stage — Flutter web bundle
 # ---------------------------------------------------------------------------
-# Pin the SDK if you prefer, e.g.
+# The Flutter SDK is downloaded explicitly instead of relying on a prebuilt
+# image, so the version is reproducible and always satisfies the pubspec's
+# Dart constraint.  Override with:
 #   docker build --build-arg FLUTTER_VERSION=3.47.7 .
-ARG FLUTTER_VERSION=stable
+ARG FLUTTER_VERSION=3.47.7
 
-FROM ghcr.io/cirruslabs/flutter:${FLUTTER_VERSION} AS build
+FROM debian:bookworm-slim AS build
 
-WORKDIR /app
+ARG FLUTTER_VERSION
 
-ENV PUB_CACHE=/root/.pub-cache \
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      ca-certificates \
+      curl \
+      git \
+      unzip \
+      xz-utils \
+ && rm -rf /var/lib/apt/lists/*
+
+ENV FLUTTER_HOME=/opt/flutter \
+    PATH=/opt/flutter/bin:/opt/flutter/bin/cache/dart-sdk/bin:$PATH \
+    PUB_CACHE=/root/.pub-cache \
     FLUTTER_SUPPRESS_ANALYTICS=true \
     CI=true
+
+RUN curl -fsSL -o /tmp/flutter.tar.xz \
+      "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz" \
+ && mkdir -p /opt \
+ && tar -xJf /tmp/flutter.tar.xz -C /opt \
+ && rm /tmp/flutter.tar.xz \
+ && git config --global --add safe.directory /opt/flutter \
+ && flutter --version
+
+WORKDIR /app
 
 # The pubspec has path dependencies (plugins/rhttp, plugins/wakelock_plus_stub)
 # so the whole source tree is required before `pub get`.
 COPY . .
 
-RUN flutter --version \
- && flutter config --no-analytics >/dev/null 2>&1 || true
+RUN flutter config --no-analytics >/dev/null 2>&1 || true
 
 RUN flutter pub get
 

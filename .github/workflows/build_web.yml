@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       flutter_version:
-        description: 'Flutter SDK image tag (e.g. stable or 3.47.7)'
+        description: 'Flutter SDK version to build with'
         required: false
-        default: stable
+        default: 3.47.7
       push_image:
         description: 'Push the built image to GHCR'
         type: boolean
@@ -82,7 +82,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            FLUTTER_VERSION=${{ inputs.flutter_version || 'stable' }}
+            FLUTTER_VERSION=${{ inputs.flutter_version || '3.47.7' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -94,7 +94,7 @@ jobs:
           echo "|:-|:-|" >> "$GITHUB_STEP_SUMMARY"
           echo "|Image|${{ steps.image.outputs.name }}|" >> "$GITHUB_STEP_SUMMARY"
           echo "|Digest|${{ steps.build.outputs.digest }}|" >> "$GITHUB_STEP_SUMMARY"
-          echo "|Flutter|${{ inputs.flutter_version || 'stable' }}|" >> "$GITHUB_STEP_SUMMARY"
+          echo "|Flutter|${{ inputs.flutter_version || '3.47.7' }}|" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           echo "${{ steps.meta.outputs.tags }}" >> "$GITHUB_STEP_SUMMARY"

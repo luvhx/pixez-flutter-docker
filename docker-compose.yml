@@ -6,8 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        # Override to pin Flutter, e.g. FLUTTER_VERSION=3.47.7
-        FLUTTER_VERSION: ${FLUTTER_VERSION:-stable}
+        # Flutter SDK version used to build the web bundle
+        FLUTTER_VERSION: ${FLUTTER_VERSION:-3.47.7}
     image: pixez-web:${PIXEZ_TAG:-latest}
     container_name: ${PIXEZ_CONTAINER_NAME:-pixez-web}
     restart: unless-stopped
