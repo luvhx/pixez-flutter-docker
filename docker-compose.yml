@@ -1,4 +1,4 @@
-name: pixez-flutter-docker
+name: pixez
 
 services:
   pixez-web:
@@ -8,8 +8,8 @@ services:
       args:
         # Flutter SDK version used to build the web bundle
         FLUTTER_VERSION: ${FLUTTER_VERSION:-3.47.7}
-    image: pixez-flutter-docker:${PIXEZ_TAG:-latest}
-    container_name: ${PIXEZ_CONTAINER_NAME:-pixez-flutter-docker}
+    image: pixez-web:${PIXEZ_TAG:-latest}
+    container_name: ${PIXEZ_CONTAINER_NAME:-pixez-web}
     restart: unless-stopped
     ports:
       - "${PIXEZ_PORT:-8080}:80"

@@ -72,7 +72,7 @@ docker compose up -d --build
 - 本地构建：`./tool/build_web.sh`
 - Web 端登录使用 Refresh Token，可用 `node tool/get_token.js` 获取
 - 端口、时区、Flutter 版本等可通过环境变量或 `.env` 调整
-- CI 自动构建镜像：push 到 `master` 后发布 `ghcr.io/luvhx/pixez-flutter-docker:latest`
+- CI 自动构建镜像：push 到 `master` 后发布 `ghcr.io/luvhx/pixez-flutter:latest`
 
 ## 常见问题及交流反馈
 
