@@ -44,6 +44,9 @@ docker compose up -d --build
 `PIXEZ_AUTH_USER` / `PIXEZ_AUTH_PASSWORD` 生成，修改后需重启容器生效。
 生产环境请配合 HTTPS，避免密码在明文 HTTP 中传输。
 
+如需临时关闭登录验证，可移除 compose 中 `PIXEZ_AUTH_PASSWORD` 的 `:?`
+约束并留空；容器启动时会打印警告并禁用 Basic Auth（不建议在公网使用）。
+
 其它命令：
 
 ```bash
