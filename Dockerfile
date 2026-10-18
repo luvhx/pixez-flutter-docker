@@ -65,10 +65,20 @@ RUN flutter build web \
 # ---------------------------------------------------------------------------
 FROM nginx:1.27-alpine AS runtime
 
+# htpasswd, used by the entrypoint script to generate HTTP Basic Auth users.
+RUN apk add --no-cache apache2-utils
+
 RUN rm -f /etc/nginx/conf.d/default.conf
 
 COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
 COPY deploy/00-cache.conf /etc/nginx/conf.d/00-cache.conf
+
+# Generates /etc/nginx/pixez-auth.conf from PIXEZ_AUTH_USER / PIXEZ_AUTH_PASSWORD.
+COPY --chmod=755 deploy/docker-auth.sh /docker-entrypoint.d/40-pixez-auth.sh
+
+# Safe default before the entrypoint runs (or if it is skipped).
+RUN printf '# authentication disabled (entrypoint not executed)\n' \
+      > /etc/nginx/pixez-auth.conf
 
 COPY --from=build /app/build/web /usr/share/nginx/html
 

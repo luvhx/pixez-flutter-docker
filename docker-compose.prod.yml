@@ -18,6 +18,8 @@ services:
       - "${PIXEZ_PORT:-7493}:80"
     environment:
       TZ: ${TZ:-Asia/Shanghai}
+      PIXEZ_AUTH_USER: ${PIXEZ_AUTH_USER:-pixez}
+      PIXEZ_AUTH_PASSWORD: ${PIXEZ_AUTH_PASSWORD:?set PIXEZ_AUTH_PASSWORD in .env}
     volumes:
       # Persist the proxied image cache across restarts.
       - pixez-cache:/var/cache/nginx

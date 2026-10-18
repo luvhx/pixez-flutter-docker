@@ -20,8 +20,9 @@ Browser ──► nginx :80 ──┬── /              Flutter bundle (build
 ## 快速开始（Docker Compose）
 
 ```bash
-git clone https://github.com/luvhx/pixez-flutter.git
-cd pixez-flutter
+git clone git@github.com:luvhx/pixez-flutter-docker.git
+cd pixez-flutter-docker
+cp .env.example .env          # 编辑 .env，设置 PIXEZ_AUTH_PASSWORD
 docker compose up -d --build
 ```
 
@@ -35,6 +36,13 @@ docker compose up -d --build
 | `PIXEZ_TAG` | `latest` | 构建出的镜像 tag |
 | `FLUTTER_VERSION` | `3.47.7` | Docker 构建时下载的 Flutter SDK 版本（需满足 Dart ≥ 3.11.5）|
 | `TZ` | `Asia/Shanghai` | 容器时区 |
+| `PIXEZ_AUTH_USER` | `pixez` | 网页登录用户名 |
+| `PIXEZ_AUTH_PASSWORD` | 无（必填）| 网页登录密码；compose 未设置会拒绝启动 |
+
+网页登录验证使用 HTTP Basic Auth，由 nginx 统一拦截（包括所有 `/pixiv-*`
+代理路径），`/healthz` 除外。凭据在容器启动时由 `.env` 中的
+`PIXEZ_AUTH_USER` / `PIXEZ_AUTH_PASSWORD` 生成，修改后需重启容器生效。
+生产环境请配合 HTTPS，避免密码在明文 HTTP 中传输。
 
 其它命令：
 
@@ -63,7 +71,9 @@ docker compose build --no-cache # 完全重新构建
 
 ```bash
 docker pull ghcr.io/luvhx/pixez-flutter-docker:latest
-docker run -d --name pixez-web -p 7493:80 ghcr.io/luvhx/pixez-flutter-docker:latest
+docker run -d --name pixez-web -p 7493:80 \
+  -e PIXEZ_AUTH_USER=pixez -e PIXEZ_AUTH_PASSWORD=change-me \
+  ghcr.io/luvhx/pixez-flutter-docker:latest
 ```
 
 手动触发时还可以指定 Flutter SDK 版本（默认 `3.47.7`）以及是否推送镜像。
@@ -74,7 +84,7 @@ docker run -d --name pixez-web -p 7493:80 ghcr.io/luvhx/pixez-flutter-docker:lat
 和编译环境：
 
 ```bash
-cp .env.example .env
+cp .env.example .env          # 编辑 .env，设置 PIXEZ_AUTH_PASSWORD
 docker compose -f docker-compose.prod.yml pull
 docker compose -f docker-compose.prod.yml up -d
 
