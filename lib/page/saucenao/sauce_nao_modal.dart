@@ -5,6 +5,7 @@ import 'package:pixez/platform/io.dart';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart' show ImageRenderMethodForWeb;
 import 'package:dio/dio.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -678,6 +679,7 @@ class _PixivIllustThumbnailState extends State<_PixivIllustThumbnail> {
     final child = _imageUrl == null
         ? _placeholder(failed: !_loading)
         : CachedNetworkImage(
+            imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
             imageUrl: webImageUrl(_imageUrl!),
             width: 56,
             height: 56,

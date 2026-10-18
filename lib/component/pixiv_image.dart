@@ -17,6 +17,7 @@
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart' show ImageRenderMethodForWeb;
 import 'package:dio/dio.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_cache_manager_dio/flutter_cache_manager_dio.dart';
@@ -175,7 +176,11 @@ class _PixivImageState extends State<PixivImage> {
   @override
   Widget build(BuildContext context) {
     final size = min(min(width ?? 60, height ?? 60), 60.0);
+    // CanvasKit renders through a texture: an HtmlImage codec can lose its
+    // <img> element while the grid scrolls and then paints black
+    // ("texImage2D: no image").  HttpGet decodes bytes instead.
     return CachedNetworkImage(
+      imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
       placeholder: (context, url) =>
           widget.placeWidget ??
           Container(
@@ -221,6 +226,7 @@ class PixivProvider {
       webImageUrl(url),
       headers: Hoster.header(url: preUrl),
       cacheManager: pixivCacheManager,
+      imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
     );
   }
 }

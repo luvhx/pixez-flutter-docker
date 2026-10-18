@@ -15,6 +15,7 @@
  */
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart' show ImageRenderMethodForWeb;
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:pixez/net/endpoints.dart';
@@ -76,6 +77,7 @@ class SpotlightCard extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(16.0))),
                   child: Container(
                     child: CachedNetworkImage(
+                      imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
                       imageUrl: webImageUrl(spotlight.thumbnail),
                       httpHeaders: Hoster.header(url: spotlight.thumbnail),
                       fit: BoxFit.cover,

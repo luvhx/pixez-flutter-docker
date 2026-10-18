@@ -19,6 +19,7 @@ import 'package:pixez/platform/io.dart';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart' show ImageRenderMethodForWeb;
 import 'package:dio/dio.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
@@ -441,6 +442,7 @@ class _UsersPageState extends State<UsersPage> with TickerProviderStateMixin {
                             content: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: CachedNetworkImage(
+                                imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
                                 imageUrl: webImageUrl(
                                   userStore
                                       .userDetail!
@@ -482,6 +484,7 @@ class _UsersPageState extends State<UsersPage> with TickerProviderStateMixin {
                       );
                     },
                     child: CachedNetworkImage(
+                      imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
                       imageUrl: webImageUrl(
                           userStore.userDetail!.profile.background_image_url!,
                       ),
@@ -729,6 +732,7 @@ class _UsersPageState extends State<UsersPage> with TickerProviderStateMixin {
                           content: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: CachedNetworkImage(
+                              imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
                               imageUrl: webImageUrl(userStore.user!.profileImageUrls.medium),
                               fit: BoxFit.cover,
                               cacheManager: pixivCacheManager,
