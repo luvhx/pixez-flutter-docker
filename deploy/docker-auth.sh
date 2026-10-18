@@ -18,8 +18,9 @@ fi
 
 AUTH_USER="${PIXEZ_AUTH_USER:-pixez}"
 
-# -b: batch mode, -c: create/overwrite the file
-htpasswd -bc "$HTPASSWD" "$AUTH_USER" "$PIXEZ_AUTH_PASSWORD"
+# -b: batch, -c: create/overwrite, -m: apr1-MD5 (supported by nginx on
+# every libc; recent htpasswd defaults to bcrypt which musl cannot verify).
+htpasswd -mbc "$HTPASSWD" "$AUTH_USER" "$PIXEZ_AUTH_PASSWORD"
 chmod 644 "$HTPASSWD"
 
 cat > "$AUTH_CONF" <<EOF
