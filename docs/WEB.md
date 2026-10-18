@@ -64,8 +64,8 @@ docker compose build --no-cache # 完全重新构建
 ```bash
 # 默认私有，需要先登录（PAT 带 read:packages）
 # echo $CR_PAT | docker login ghcr.io -u <你的用户名> --password-stdin
-docker pull ghcr.io/luvhx/pixez-flutter:latest
-docker run -d --name pixez-web -p 8080:80 ghcr.io/luvhx/pixez-flutter:latest
+docker pull ghcr.io/luvhx/pixez-flutter-docker:latest
+docker run -d --name pixez-flutter-docker -p 8080:80 ghcr.io/luvhx/pixez-flutter-docker:latest
 ```
 
 若希望匿名拉取，在 GitHub 的
