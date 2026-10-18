@@ -20,6 +20,7 @@ import 'package:pixez/main.dart';
 import 'package:pixez/models/account.dart';
 import 'package:pixez/models/error_message.dart';
 import 'package:pixez/network/api_client.dart';
+import 'package:pixez/net/auth_header.dart';
 import 'package:pixez/network/oauth_client.dart';
 
 class RefreshTokenInterceptor extends QueuedInterceptorsWrapper {
@@ -42,8 +43,8 @@ class RefreshTokenInterceptor extends QueuedInterceptorsWrapper {
   Future<void> onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     if (!options.path.contains('v1/walkthrough/illusts')) {
-      options.headers[OAuthClient.AUTHORIZATION] = await getToken();
-      if (options.headers[OAuthClient.AUTHORIZATION] == null) {
+      options.headers[kPixivAuthHeader] = await getToken();
+      if (options.headers[kPixivAuthHeader] == null) {
         return handler.reject(DioException(requestOptions: options));
       }
     }
@@ -122,7 +123,7 @@ class RefreshTokenInterceptor extends QueuedInterceptorsWrapper {
       var option = err.requestOptions;
       final newToken = (await getToken());
       print("unlock retry ======================== $newToken");
-      option.headers[OAuthClient.AUTHORIZATION] = newToken;
+      option.headers[kPixivAuthHeader] = newToken;
       var response = await apiClient.httpClient.request(
         option.path,
         data: option.data,

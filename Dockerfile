@@ -72,7 +72,6 @@ RUN rm -f /etc/nginx/conf.d/default.conf
 
 COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
 COPY deploy/00-cache.conf /etc/nginx/conf.d/00-cache.conf
-COPY deploy/01-auth-map.conf /etc/nginx/conf.d/01-auth-map.conf
 
 # Generates /etc/nginx/pixez-auth.conf from PIXEZ_AUTH_USER / PIXEZ_AUTH_PASSWORD.
 COPY --chmod=755 deploy/docker-auth.sh /docker-entrypoint.d/40-pixez-auth.sh
