@@ -14,7 +14,7 @@
  *
  */
 
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -22,7 +22,7 @@ import 'package:dio/dio.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:pixez/platform/dirs.dart';
 import 'package:pixez/component/null_hero.dart';
 import 'package:pixez/document_plugin.dart';
 import 'package:pixez/er/hoster.dart';

@@ -1,0 +1,12 @@
+{
+  "name": "pixez-token-helper",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Playwright helper that obtains a Pixiv refresh token for PixEz Web",
+  "bin": {
+    "pixez-get-token": "get_token.js"
+  },
+  "dependencies": {
+    "playwright": "^1.56.0"
+  }
+}

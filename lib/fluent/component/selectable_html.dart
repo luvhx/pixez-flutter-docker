@@ -14,7 +14,7 @@
  *
  */
 
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';

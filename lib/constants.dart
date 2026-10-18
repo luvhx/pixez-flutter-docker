@@ -14,7 +14,7 @@
  *
  */
 
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 
 class Constants {
   static const String no_h = 'assets/images/h_long.jpg';

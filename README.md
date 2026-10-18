@@ -58,6 +58,21 @@
 
 觉得有些地方设计的不妥？同样欢迎分享设计。
 
+## Web 版 & Docker Compose 部署
+
+本项目现已支持 Web 平台，并附带同源反向代理（解决 Pixiv 的 CORS /
+Referer / Host 限制），可以用 Docker Compose 一键部署：
+
+```bash
+docker compose up -d --build
+# 打开 http://localhost:8080
+```
+
+- 完整说明：[docs/WEB.md](docs/WEB.md)
+- 本地构建：`./tool/build_web.sh`
+- Web 端登录使用 Refresh Token，可用 `node tool/get_token.js` 获取
+- 端口、时区、Flutter 版本等可通过环境变量或 `.env` 调整
+
 ## 常见问题及交流反馈
 
 [使用指南 & 常见问题在这里](.github/FAQ.md)，反馈问题 / 加群询问之前请先看！（特别是旧原生版用户）

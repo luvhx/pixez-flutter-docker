@@ -14,13 +14,14 @@
  */
 
 import 'dart:convert';
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pixez/constants.dart';
-import 'package:pixez/er/fluent_leader.dart';
+import 'package:pixez/er/fluent_leader.dart'
+    if (dart.library.js_interop) 'package:pixez/er/fluent_leader_stub.dart';
 import 'package:pixez/er/lprinter.dart';
 import 'package:pixez/main.dart';
 import 'package:pixez/models/account.dart';

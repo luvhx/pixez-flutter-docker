@@ -15,14 +15,14 @@
  */
 
 import 'dart:async';
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 import 'package:path/path.dart' as Path;
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path/path.dart';
 import 'package:pixez/models/illust.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:path_provider_foundation/path_provider_foundation.dart';
+import 'package:pixez/platform/db.dart';
+import 'package:pixez/platform/ios_container.dart';
 
 part 'glance_illust_persist.g.dart';
 
@@ -125,16 +125,14 @@ create table $tableIllustPersist (
   Future<String> getPath() async {
     if (Platform.isIOS) {
       try {
-        final PathProviderFoundation providerFoundation =
-            PathProviderFoundation();
-        final path = await providerFoundation.getContainerPath(
-          appGroupIdentifier: "group.pixez",
-        );
-        final directory = Directory(Path.join(path!, "DB"));
-        if (!(await directory.exists())) {
-          await directory.create(recursive: true);
+        final path = await iosAppGroupContainerPath();
+        if (path != null) {
+          final directory = Directory(Path.join(path, "DB"));
+          if (!(await directory.exists())) {
+            await directory.create(recursive: true);
+          }
+          return directory.path;
         }
-        return directory.path;
       } catch (e) {}
     }
     return await getDatabasesPath();

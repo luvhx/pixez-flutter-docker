@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:pixez/network/network_mode.dart';
 
 class PixivImageSource {
@@ -25,6 +26,9 @@ class PixivImageSource {
     required NetworkMode networkMode,
     required String? pictureSource,
   }) {
+    // On the web every image is served through the same-origin proxy; an
+    // alternative image host would be cross-origin and fail CORS.
+    if (kIsWeb) return uri;
     if (!networkMode.allowsImageSource) return uri;
     if (uri.host != imageHost) return uri;
 

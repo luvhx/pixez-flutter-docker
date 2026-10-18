@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 
 import 'package:flutter/widgets.dart';
 

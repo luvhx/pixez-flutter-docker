@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:dio_compatibility_layer/dio_compatibility_layer.dart';
 import 'package:pixez/component/pixiv_image.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:pixez/er/lprinter.dart';
 import 'package:pixez/er/prefer.dart';
 import 'package:pixez/main.dart';
 import 'package:pixez/models/onezero_response.dart';
-import 'package:rhttp/rhttp.dart' as r;
+import 'package:pixez/net/http_adapter.dart';
 
 class Hoster {
   static Map<String, dynamic> _map = Map();
@@ -31,17 +31,7 @@ class Hoster {
   static Dio httpClient = Dio(BaseOptions(baseUrl: 'https://1dot1dot1dot1.cloudflare-dns.com'));
 
   static Future<Dio> createDioClient() async {
-    final compatibleClient = await r.RhttpCompatibleClient.create(
-      settings: r.ClientSettings(
-        dnsSettings: r.DnsSettings.static(
-          overrides: {
-            "1dot1dot1dot1.cloudflare-dns.com": ['104.16.248.249', '104.16.249.249'],
-          },
-        ),
-        tlsSettings: r.TlsSettings(verifyCertificates: true, sni: false),
-      )
-    );
-    httpClient.httpClientAdapter = ConversionLayerAdapter(compatibleClient);
+    httpClient.httpClientAdapter = await createDohAdapter();
     return httpClient;
   }
 
@@ -138,6 +128,9 @@ class Hoster {
   }
 
   static Map<String, String> header({String? url}) {
+    // The browser sets/filters these headers itself; the reverse proxy adds
+    // the pixiv Referer.
+    if (kIsWeb) return {};
     Map<String, String> map = {
       "referer": "https://app-api.pixiv.net/",
       "User-Agent": "PixivIOSApp/5.8.0",

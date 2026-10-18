@@ -13,7 +13,7 @@
  *  this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import 'dart:convert';
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 
 import 'package:material_ui/material_ui.dart';
 import 'package:mobx/mobx.dart';

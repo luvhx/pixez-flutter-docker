@@ -1,15 +1,12 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pixez/component/pixiv_image.dart';
 import 'package:pixez/er/hoster.dart';
 import 'package:pixez/er/pixiv_image_source.dart';
 import 'package:pixez/main.dart';
 import 'package:pixez/network/api_client.dart';
 import 'package:pixez/network/network_mode.dart';
+import 'package:pixez/net/http_adapter.dart';
 
 class NetworkSettingPage extends StatefulWidget {
   @override
@@ -63,21 +60,13 @@ class _NetworkSettingPageState extends State<NetworkSettingPage> {
         networkMode: NetworkMode.compat,
         pictureSource: host,
       );
-      dio.httpClientAdapter = IOHttpClientAdapter(
-        createHttpClient: () {
-          HttpClient httpClient = HttpClient();
-          httpClient.badCertificateCallback =
-              (X509Certificate cert, String host, int port) => true;
-          return httpClient;
-        },
-      );
-      await dio.download(
+      dio.httpClientAdapter = await createInsecureAdapter();
+      await dio.get<List<int>>(
         trueUrl,
-        (await getTemporaryDirectory()).path + "/s.png",
+        options: Options(responseType: ResponseType.bytes),
         onReceiveProgress: (min, max) {
           throw ok();
         },
-        deleteOnError: true,
       );
     } catch (e) {
       if (e is ok) {

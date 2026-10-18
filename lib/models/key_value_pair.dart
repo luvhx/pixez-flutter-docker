@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:pixez/platform/db.dart';
 import 'dart:convert' show json;
 import 'package:path/path.dart';
 

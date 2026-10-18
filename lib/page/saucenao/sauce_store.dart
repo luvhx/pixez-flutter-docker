@@ -15,7 +15,8 @@
  */
 
 import 'dart:async';
-import 'dart:io';
+import 'package:pixez/net/endpoints.dart';
+import 'package:pixez/platform/io.dart';
 import 'dart:typed_data';
 
 import 'package:bot_toast/bot_toast.dart';
@@ -28,7 +29,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_android/image_picker_android.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:mobx/mobx.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:pixez/platform/dirs.dart';
 import 'package:pixez/er/lprinter.dart';
 import 'package:pixez/er/prefer.dart';
 import 'package:pixez/i18n.dart';
@@ -41,7 +42,7 @@ class SauceStore = SauceStoreBase with _$SauceStore;
 
 abstract class SauceStoreBase with Store {
   static String host = "saucenao.com";
-  Dio dio = Dio(BaseOptions(baseUrl: "https://saucenao.com"));
+  Dio dio = Dio(BaseOptions(baseUrl: kSauceNaoBaseUrl));
   ObservableList<int> results = ObservableList();
   late StreamController _streamController;
   late ObservableStream observableStream;

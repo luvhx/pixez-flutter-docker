@@ -14,7 +14,7 @@
  *
  */
 
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';

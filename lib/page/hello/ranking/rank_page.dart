@@ -15,7 +15,7 @@
  */
 
 import 'dart:async';
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';

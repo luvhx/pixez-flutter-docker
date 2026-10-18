@@ -14,18 +14,18 @@
  *
  */
 
-import 'dart:io';
+import 'package:pixez/net/endpoints.dart';
+import 'package:pixez/net/http_adapter.dart';
+import 'package:pixez/platform/io.dart';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
-import 'package:dio_compatibility_layer/dio_compatibility_layer.dart';
 import 'package:mobx/mobx.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:pixez/main.dart';
 import 'package:pixez/models/amwork.dart';
 import 'package:pixez/network/api_client.dart';
 import 'package:html/dom.dart';
-import 'package:rhttp/rhttp.dart' as r;
 
 part 'soup_store.g.dart';
 
@@ -48,8 +48,11 @@ abstract class _SoupStoreBase with Store {
   @action
   fetch(String url) async {
     try {
-      final compatibleClient = await r.RhttpCompatibleClient.create();
-      dio.httpClientAdapter = ConversionLayerAdapter(compatibleClient);
+      url = webProxyUrl(url);
+      dio.httpClientAdapter = await createApiAdapter(
+        host: 'www.pixivision.net',
+        mode: userSetting.networkMode,
+      );
       if (userSetting.languageNum == 0 || userSetting.languageNum >= 5) {
         _fetchEn(url);
       } else {

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:pixez/platform/dirs.dart';
 import 'package:pixez/er/hoster.dart';
 import 'package:pixez/er/pixiv_image_source.dart';
 import 'package:pixez/fluent/component/pixiv_image.dart';

@@ -1,0 +1,133 @@
+# PixEz Web
+
+PixEz 现在可以直接以网页形式运行，并通过 Docker Compose 一键部署。
+
+Web 端不是简单的 `flutter build web`：Pixiv 的接口没有 CORS 头、图片域名
+`i.pximg.net` 校验 `Referer`、浏览器又禁止设置 `Host` 头，所以浏览器无法直接
+访问 Pixiv。项目内置了一个同源反向代理（nginx），Flutter 端所有请求都走
+`/pixiv-api`、`/pixiv-oauth`、`/pximg` 等前缀。
+
+```
+Browser ──► nginx :80 ──┬── /              Flutter bundle (build/web)
+                        ├── /pixiv-api/    app-api.pixiv.net   (Host/Referer 重写)
+                        ├── /pixiv-oauth/  oauth.secure.pixiv.net
+                        ├── /pximg/        i.pximg.net          (+ 7 天磁盘缓存)
+                        ├── /spximg/       s.pximg.net
+                        ├── /pixivision/   www.pixivision.net
+                        └── /saucenao/     saucenao.com
+```
+
+## 快速开始（Docker Compose）
+
+```bash
+git clone https://github.com/luvhx/pixez-flutter.git
+cd pixez-flutter
+docker compose up -d --build
+```
+
+打开 <http://localhost:8080>。
+
+常用环境变量（可写入 `.env`）：
+
+| 变量 | 默认值 | 说明 |
+| --- | --- | --- |
+| `PIXEZ_PORT` | `8080` | 宿主机映射端口 |
+| `PIXEZ_TAG` | `latest` | 构建出的镜像 tag |
+| `FLUTTER_VERSION` | `stable` | 构建时使用的 Flutter 镜像 tag，可固定为 `3.47.7` |
+| `TZ` | `Asia/Shanghai` | 容器时区 |
+
+其它命令：
+
+```bash
+docker compose logs -f          # 查看日志
+docker compose down             # 停止
+docker compose build --no-cache # 完全重新构建
+```
+
+镜像大小约为 nginx 基础镜像 + 50 MB 前端产物；Flutter 编译阶段只在构建时
+占用磁盘。
+
+## 本地构建（不使用 Docker）
+
+要求：Flutter stable（Dart ≥ 3.11.5）、Node.js（仅开发用代理脚本）。
+
+```bash
+./tool/build_web.sh
+node tool/dev_server.js        # http://127.0.0.1:8099
+```
+
+`tool/dev_server.js` 是一个只用于本地调试的 Node 脚本，行为与
+`deploy/nginx.conf` 一致（静态文件 + Pixiv 反向代理）。
+
+如果要部署到已有 nginx，复制 `build/web` 到站点目录，并引入
+`deploy/nginx.conf` 与 `deploy/00-cache.conf` 即可。
+
+## Web 端的实现要点
+
+| 能力 | 原生实现 | Web 实现 |
+| --- | --- | --- |
+| HTTP | `rhttp`（Rust/reqwest，可选 ECH/自定义 DNS） | Dio `BrowserHttpClientAdapter` + 同源代理 |
+| 数据库 | `sqflite_common_ffi`（SQLite） | `sqflite_common_ffi_web`（SQLite/WebAssembly，数据存 IndexedDB） |
+| 图片缓存 | `flutter_cache_manager` 磁盘缓存 | `cached_network_image_web`（浏览器 HTTP 缓存） |
+| 保存图片 | SAF / 相册 / 文件系统 | 浏览器下载（Blob + `<a download>`） |
+| 设置导入导出 | SAF 文件选择器 | 文件选择器 / 浏览器下载 |
+| 登录 | WebView + `pixiv://` 回调 | Pixiv Refresh Token 登录（附 `tool/get_token.js`） |
+| 剪贴板 | 复制图片 | 复制图片链接（浏览器限制） |
+| 刷新率 | `flutter_displaymode` | 由浏览器决定 |
+| 后台下载 | 独立 isolate 队列 | 浏览器下载，进度显示在任务页 |
+| Fluent UI（桌面） | `window_manager` + `flutter_acrylic` | 不启用，使用 Material UI |
+
+改动集中在 `lib/platform/` 与 `lib/net/`：
+
+- `lib/platform/io.dart` — `dart:io` 兼容层（Web 端为空实现）
+- `lib/platform/dirs.dart` — `path_provider` 兼容层
+- `lib/platform/db.dart` — SQLite 工厂切换
+- `lib/platform/storage_init.dart` — 启动时初始化平台存储
+- `lib/net/http_adapter.dart` — rhttp / 浏览器适配器切换
+- `lib/net/endpoints.dart` — 原生绝对地址 / Web 同源代理前缀
+- `lib/document_plugin.dart`、`lib/saf_plugin.dart` — 保存/导入导出
+- `lib/er/fetcher.dart` — 下载队列（原生 isolate / Web 直接下载）
+
+## 已知限制
+
+- **登录**：Web 端无法拦截 `pixiv://` 深链，且 Pixiv 已关闭第三方客户端的密码
+  授权（`grant_type=password` 返回 `1508 The grant type is unauthorized`），
+  因此 Web 端使用 **Refresh Token** 登录。首次登录可以：
+
+  ```bash
+  npm --prefix tool install
+  npx --prefix tool playwright install chromium
+  node tool/get_token.js
+  ```
+
+  脚本会打开 Pixiv 登录页，捕获 `pixiv://` 回调里的 code 并换取 token，最后打印
+  refresh token；把它粘贴到登录页即可。也可以在任意可信的 Pixiv App-API 工具中
+  获取 refresh token 后粘贴进来。
+- **应用内购买**：`in_app_purchase` 没有 Web 实现，赞助入口在 Web 端不生效。
+- **Android 专属功能**：小组件、SAF 目录、后台任务、刷新率设置等不可用。
+- **iOS 专属功能**：App Group 共享缓存、剪贴板图片等不可用。
+- **下载**：受浏览器限制，只能逐个触发下载；不能写入任意目录。批量下载会
+  依次弹出多个下载请求，建议在浏览器中允许该站点「自动下载多个文件」。
+- **图片防盗链**：必须通过本项目的 nginx 访问，直接 `flutter run -d chrome`
+  会因为跨域/Referer 问题加载不出图片。
+
+## 安全建议
+
+- 生产环境请在前面再加一层 HTTPS（Caddy / Traefik / 云负载均衡）。
+- 代理会把 `Host`、`Referer` 重写为 Pixiv 的域名，请勿把该服务暴露给不可信
+  用户，否则可能被当作 Pixiv API 的匿名代理使用。
+- 登录凭据只发送给 `oauth.secure.pixiv.net`（经由你的 nginx 转发），不会落盘；
+  refresh token 保存在浏览器 `localStorage`（`shared_preferences`）与 IndexedDB
+  （账号数据库）中，公共设备上请注意清理站点数据。
+
+## 排错
+
+| 现象 | 排查 |
+| --- | --- |
+| 页面白屏 | 打开开发者工具看 `main.dart.js` 是否 200；确认 `build/web` 已复制到 nginx 根目录 |
+| 图片 403/404 | 检查 `/pximg/` 代理是否生效，`Referer` 是否为 `https://www.pixiv.net/` |
+| API 400 / 401 | 未登录或 token 过期；重新登录，检查 `/pixiv-api/` 代理是否带上了正确的 `Host` |
+| 登录报 `invalid_grant` | refresh token 失效或被吊销，重新运行 `node tool/get_token.js` |
+| 数据没有保存 | 浏览器是否禁用了 IndexedDB / 隐私模式 |
+| `sqlite3.wasm` 404 | 构建前执行 `dart run sqflite_common_ffi_web:setup` |
+| 中文显示为方块 | 服务器/浏览器缺少中文字体；Flutter Web 使用系统字体渲染 |

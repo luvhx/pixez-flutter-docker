@@ -15,7 +15,7 @@
  */
 
 import 'dart:async';
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 import 'dart:math';
 
 import 'package:easy_refresh/easy_refresh.dart';

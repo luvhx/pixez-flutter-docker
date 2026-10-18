@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:pixez/component/pixiv_image.dart';
 import 'package:pixez/i18n.dart';
 import 'package:pixez/main.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:pixez/network/network_mode.dart';
 
 class NetworkPage extends StatefulWidget {
@@ -66,10 +67,28 @@ class _NetworkPageState extends State<NetworkPage> {
                 ),
               ),
               const Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: _buildNetworkModeSetting(context),
-              ),
+              if (kIsWeb)
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'Web 版通过同源反向代理访问 Pixiv，无需调整连接模式或图源。',
+                        style: TextStyle(fontSize: 12.0),
+                      ),
+                    ),
+                  ),
+                ),
+              if (!kIsWeb)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: _buildNetworkModeSetting(context),
+                ),
+              if (!kIsWeb)
               Visibility(
                 visible: userSetting.networkMode.allowsImageSource,
                 child: Padding(

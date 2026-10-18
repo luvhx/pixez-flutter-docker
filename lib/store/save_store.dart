@@ -15,14 +15,14 @@
  */
 
 import 'dart:async';
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobx/mobx.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:pixez/platform/dirs.dart';
 import 'package:pixez/document_plugin.dart';
 import 'package:pixez/er/toaster.dart';
 import 'package:pixez/exts.dart';
@@ -359,7 +359,7 @@ abstract class _SaveStoreBase with Store {
     var random = Random(DateTime.now().millisecondsSinceEpoch);
     var randomList = List<int>.generate(
       8,
-      (x) => random.nextInt(9223372036854775807),
+      (x) => random.nextInt(0x7fffffff),
     );
     uint8list.addAll(randomList);
   }

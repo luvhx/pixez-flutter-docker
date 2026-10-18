@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';

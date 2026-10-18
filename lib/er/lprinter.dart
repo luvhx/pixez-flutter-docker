@@ -13,10 +13,10 @@
  *  this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 
 import 'package:flutter/foundation.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:pixez/platform/dirs.dart';
 import 'package:path/path.dart';
 
 //分下层，以免以后尴尬

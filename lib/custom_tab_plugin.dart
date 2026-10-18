@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher_string.dart';

@@ -14,24 +14,21 @@
  *
  */
 
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:pixez/models/onezero_response.dart';
+import 'package:pixez/net/http_adapter.dart';
 
 class OnezeroClient {
   late Dio httpClient;
   static const String URL_DNS_RESOLVER = "https://doh.dns.sb";
 
   OnezeroClient() {
-    this.httpClient = Dio(BaseOptions(
-        baseUrl: URL_DNS_RESOLVER, connectTimeout: Duration(seconds: 10)));
-      httpClient.httpClientAdapter = IOHttpClientAdapter(createHttpClient: () {
-        HttpClient httpClient = HttpClient();
-        httpClient.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
-        return httpClient;
-      });
+    this.httpClient = Dio(
+      BaseOptions(
+        baseUrl: URL_DNS_RESOLVER,
+        connectTimeout: const Duration(seconds: 10),
+      ),
+    );
   }
 
   //     @GET("dns-query")
@@ -43,6 +40,7 @@ class OnezeroClient {
   //         @Query("cd") cd: Boolean? = null
   // ): Observable<DnsQueryResponse>
   Future<OnezeroResponse> queryDns(String name) async {
+    httpClient.httpClientAdapter = await createInsecureAdapter();
     Response response = await httpClient.get('/dns-query',
         options: Options(
           headers: {

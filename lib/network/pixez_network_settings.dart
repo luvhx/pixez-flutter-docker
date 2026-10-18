@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 
 import 'package:pixez/er/hoster.dart';
 import 'package:pixez/network/network_mode.dart';

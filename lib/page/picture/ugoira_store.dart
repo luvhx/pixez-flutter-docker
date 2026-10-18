@@ -14,13 +14,13 @@
  *
  */
 
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 import 'package:archive/archive.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:pixez/platform/dirs.dart';
 import 'package:pixez/er/hoster.dart';
 import 'package:pixez/er/pixiv_image_source.dart';
 import 'package:pixez/er/lprinter.dart';

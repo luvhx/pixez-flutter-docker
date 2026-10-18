@@ -15,7 +15,7 @@
  */
 
 import 'dart:async';
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 import 'dart:ui' as ui;
 
 import 'package:material_ui/material_ui.dart';

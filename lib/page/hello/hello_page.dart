@@ -17,6 +17,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:pixez/component/painter_avatar.dart';
@@ -41,7 +42,7 @@ class HelloPage extends StatefulWidget {
 }
 
 class _HelloPageState extends State<HelloPage> {
-  late StreamSubscription _sub;
+  StreamSubscription? _sub;
   late int index;
   late PageController _pageController;
   double? bottomNavigatorHeight = null;
@@ -49,7 +50,7 @@ class _HelloPageState extends State<HelloPage> {
 
   @override
   void dispose() {
-    _sub.cancel();
+    _sub?.cancel();
     _pageController.dispose();
     super.dispose();
   }
@@ -108,6 +109,8 @@ class _HelloPageState extends State<HelloPage> {
   }
 
   Future<void> initLinksStream() async {
+    // Deep links are a native-only feature.
+    if (kIsWeb) return;
     try {
       Uri? initialLink = await DeepLinkPlugin.getInitialUri();
       if (initialLink != null) Leader.pushWithUri(context, initialLink);

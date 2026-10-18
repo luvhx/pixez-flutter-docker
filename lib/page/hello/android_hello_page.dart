@@ -15,7 +15,7 @@
  */
 
 import 'dart:async';
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 import 'dart:ui';
 
 import 'package:bot_toast/bot_toast.dart';
@@ -435,7 +435,7 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
     );
   }
 
-  late StreamSubscription _sub;
+  StreamSubscription? _sub;
 
   initPlatform() async {
     try {
@@ -493,7 +493,7 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
   void dispose() {
     _intentDataStreamSubscription.cancel();
     _pageController.dispose();
-    _sub.cancel();
+    _sub?.cancel();
     super.dispose();
   }
 

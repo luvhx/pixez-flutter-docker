@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'package:pixez/net/endpoints.dart';
+import 'package:pixez/platform/io.dart';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -7,7 +8,7 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:pixez/platform/dirs.dart';
 import 'package:pixez/component/null_hero.dart';
 import 'package:pixez/component/painter_avatar.dart';
 import 'package:pixez/component/pixiv_image.dart';
@@ -239,8 +240,9 @@ class _NovelUsersPageState extends State<NovelUsersPage>
                       );
                     },
                     child: CachedNetworkImage(
-                      imageUrl:
+                      imageUrl: webImageUrl(
                           userStore.userDetail!.profile.background_image_url!,
+                      ),
                       fit: BoxFit.fitWidth,
                       cacheManager: pixivCacheManager,
                       httpHeaders: Hoster.header(

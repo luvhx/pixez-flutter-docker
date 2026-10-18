@@ -15,7 +15,7 @@
  */
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path/path.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:pixez/platform/db.dart';
 
 part 'account.g.dart';
 

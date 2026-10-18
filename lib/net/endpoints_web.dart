@@ -1,0 +1,53 @@
+/// Web endpoints: everything goes through the same-origin reverse proxy so the
+/// browser never has to deal with CORS or Pixiv's hot-link protection.
+library;
+
+const String kApiBaseUrl = '/pixiv-api';
+const String kOauthBaseUrl = '/pixiv-oauth';
+const String kAccountBaseUrl = '/pixiv-accounts';
+const String kWebBaseUrl = '/pixiv-web';
+const String kPixivisionBaseUrl = '/pixivision';
+const String kSauceNaoBaseUrl = '/saucenao';
+
+/// Rewrite Pixiv image hosts to same-origin proxy paths.
+String webImageUrl(String url) {
+  final uri = Uri.tryParse(url);
+  if (uri == null || uri.host.isEmpty) return url;
+
+  final prefix = switch (uri.host) {
+    'i.pximg.net' => '/pximg',
+    's.pximg.net' => '/spximg',
+    _ => null,
+  };
+  if (prefix == null) return url;
+
+  final query = uri.hasQuery ? '?${uri.query}' : '';
+  return '$prefix${uri.path}$query';
+}
+
+/// Web pages are always opened externally (new tab), so keep them absolute.
+String webPageUrl(String url) => url;
+
+String? proxyHostHeader([String? host]) => host;
+
+/// Rewrite any known Pixiv / SauceNAO host to its same-origin proxy prefix.
+String webProxyUrl(String url) {
+  final uri = Uri.tryParse(url);
+  if (uri == null || uri.host.isEmpty) return url;
+
+  final prefix = switch (uri.host) {
+    'i.pximg.net' => '/pximg',
+    's.pximg.net' => '/spximg',
+    'app-api.pixiv.net' => '/pixiv-api',
+    'oauth.secure.pixiv.net' => '/pixiv-oauth',
+    'accounts.pixiv.net' => '/pixiv-accounts',
+    'www.pixiv.net' => '/pixiv-web',
+    'www.pixivision.net' => '/pixivision',
+    'saucenao.com' => '/saucenao',
+    _ => null,
+  };
+  if (prefix == null) return url;
+
+  final query = uri.hasQuery ? '?${uri.query}' : '';
+  return '$prefix${uri.path}$query';
+}

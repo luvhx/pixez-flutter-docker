@@ -16,6 +16,7 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:pixez/net/endpoints.dart';
 import 'package:pixez/component/pixiv_image.dart';
 import 'package:pixez/er/hoster.dart';
 import 'package:pixez/page/user/users_page.dart';
@@ -53,7 +54,7 @@ class _PainterAvatarState extends State<PainterAvatar> {
         },
         child: widget.size == null
             ? CachedNetworkImage(
-                imageUrl: widget.url,
+                imageUrl: webImageUrl(widget.url),
                 imageBuilder: (context, imageProvider) => Container(
                   width: 60.0,
                   height: 60.0,
@@ -74,7 +75,7 @@ class _PainterAvatarState extends State<PainterAvatar> {
                 ),
               )
             : CachedNetworkImage(
-                imageUrl: widget.url,
+                imageUrl: webImageUrl(widget.url),
                 cacheManager: pixivCacheManager,
                 errorWidget: (context, url, error) => Container(
                   width: widget.size!.width,

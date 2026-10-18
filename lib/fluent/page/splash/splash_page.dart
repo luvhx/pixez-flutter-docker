@@ -21,6 +21,7 @@ import 'package:pixez/lighting/lighting_store.dart';
 import 'package:pixez/main.dart';
 import 'package:pixez/network/api_client.dart';
 import 'package:pixez/network/oauth_client.dart';
+import 'package:pixez/net/endpoints.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -55,9 +56,9 @@ class _SplashPageState extends State<SplashPage>
     userDisposer = reaction((_) => userSetting.needsCompatibleDnsFetch, (_) {
       if (!userSetting.needsCompatibleDnsFetch) {
         apiClient.httpClient.options.baseUrl =
-            'https://${ApiClient.BASE_API_URL_HOST}';
+            kApiBaseUrl;
         oAuthClient.httpClient.options.baseUrl =
-            'https://${OAuthClient.BASE_OAUTH_URL_HOST}';
+            kOauthBaseUrl;
         Leader.pushUntilHome(context);
         isPush = true;
       }
@@ -65,9 +66,9 @@ class _SplashPageState extends State<SplashPage>
     if (!userSetting.needsCompatibleDnsFetch) {
       Future.delayed(Duration(microseconds: 100), () {
         apiClient.httpClient.options.baseUrl =
-            'https://${ApiClient.BASE_API_URL_HOST}';
+            kApiBaseUrl;
         oAuthClient.httpClient.options.baseUrl =
-            'https://${OAuthClient.BASE_OAUTH_URL_HOST}';
+            kOauthBaseUrl;
         Leader.pushUntilHome(context);
         isPush = true;
       });

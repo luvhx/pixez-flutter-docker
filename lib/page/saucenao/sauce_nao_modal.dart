@@ -1,5 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
+import 'package:pixez/net/endpoints.dart';
+import 'package:pixez/platform/file_image.dart';
+import 'package:pixez/platform/io.dart';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -11,7 +13,7 @@ import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_android/image_picker_android.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:pixez/platform/dirs.dart';
 import 'package:pixez/component/pixiv_image.dart';
 import 'package:pixez/er/hoster.dart';
 import 'package:pixez/er/leader.dart';
@@ -458,8 +460,8 @@ class _SauceNaoModalState extends State<SauceNaoModal> {
             if (_pickedPath != null)
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.file(
-                  File(_pickedPath!),
+                child: pickedFileImage(
+                  _pickedPath!,
                   width: 120,
                   height: 120,
                   fit: BoxFit.cover,
@@ -676,7 +678,7 @@ class _PixivIllustThumbnailState extends State<_PixivIllustThumbnail> {
     final child = _imageUrl == null
         ? _placeholder(failed: !_loading)
         : CachedNetworkImage(
-            imageUrl: _imageUrl!,
+            imageUrl: webImageUrl(_imageUrl!),
             width: 56,
             height: 56,
             fit: BoxFit.cover,

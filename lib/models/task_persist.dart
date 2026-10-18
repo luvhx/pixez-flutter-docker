@@ -14,7 +14,7 @@
  */
 import 'package:path/path.dart';
 import 'package:pixez/models/illust.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:pixez/platform/db.dart';
 
 class TaskPersist {
   int? id;

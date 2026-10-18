@@ -1,36 +1,8 @@
-import 'dart:io';
+/// Settings import / export.
+///
+/// Native builds use the Storage Access Framework.  On the web, exports become
+/// browser downloads and imports use the file picker.
+library;
 
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/services.dart';
-
-class SAFPlugin {
-  static const platform = const MethodChannel('com.perol.dev/saf');
-
-  static Future<String?> createFile(String name, String type) async {
-    final result = await platform.invokeMethod("createFile", {
-      'name': name,
-      'mimeType': type,
-    });
-    if (result != null) {
-      return result;
-    }
-    return null;
-  }
-
-  static Future<void> writeUri(String uri, Uint8List data) async {
-    return platform.invokeMethod("writeUri", {'uri': uri, 'data': data});
-  }
-
-  static Future<Uint8List?> openFile() async {
-    if (Platform.isIOS) {
-      try {
-        final result = await FilePicker.pickFile();
-        return await result!.readAsBytes();
-      } catch (e) {}
-      return null;
-    }
-    return platform.invokeMethod<Uint8List>("openFile", {
-      'type': "application/json",
-    });
-  }
-}
+export 'saf_plugin_native.dart'
+    if (dart.library.js_interop) 'saf_plugin_web.dart';

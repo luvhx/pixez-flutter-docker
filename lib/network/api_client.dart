@@ -16,13 +16,12 @@
 
 import 'dart:convert';
 import 'dart:core';
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 
 import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
-import 'package:dio_compatibility_layer/dio_compatibility_layer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:pixez/component/pixiv_image.dart';
@@ -31,9 +30,9 @@ import 'package:pixez/models/follow_detail.dart';
 import 'package:pixez/models/illust_bookmark_tags_response.dart';
 import 'package:pixez/models/tags.dart';
 import 'package:pixez/models/ugoira_metadata_response.dart';
-import 'package:pixez/network/pixez_network_settings.dart';
 import 'package:pixez/network/refresh_token_interceptor.dart';
-import 'package:rhttp/rhttp.dart' as r;
+import 'package:pixez/net/endpoints.dart';
+import 'package:pixez/net/http_adapter.dart';
 
 final ApiClient apiClient = ApiClient();
 
@@ -69,13 +68,10 @@ class ApiClient {
   );
 
   Future<Dio> createDioClient() async {
-    final compatibleClient = await r.RhttpCompatibleClient.create(
-      settings: PixezNetworkSettings.forHost(
-        BASE_API_URL_HOST,
-        userSetting.networkMode,
-      ),
+    httpClient.httpClientAdapter = await createApiAdapter(
+      host: BASE_API_URL_HOST,
+      mode: userSetting.networkMode,
     );
-    httpClient.httpClientAdapter = ConversionLayerAdapter(compatibleClient);
     if (Platform.isAndroid) {
       try {
         DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -89,14 +85,11 @@ class ApiClient {
     return httpClient;
   }
 
-  static Future<ConversionLayerAdapter> createCompatibleClient() async {
-    final compatibleClient = await r.RhttpCompatibleClient.create(
-      settings: PixezNetworkSettings.forImages(
-        userSetting.pictureSource,
-        userSetting.networkMode,
-      ),
+  static Future<HttpClientAdapter> createCompatibleClient() async {
+    return createImageAdapter(
+      source: userSetting.pictureSource,
+      mode: userSetting.networkMode,
     );
-    return ConversionLayerAdapter(compatibleClient);
   }
 
   ApiClient({bool isBookmark = false}) {
@@ -104,16 +97,18 @@ class ApiClient {
     httpClient =
         Dio(
             BaseOptions(
-              baseUrl: 'https://${BASE_API_URL_HOST}',
+              baseUrl: kApiBaseUrl,
               headers: {
                 "X-Client-Time": time,
                 "X-Client-Hash": getHash(time + hashSalt),
-                "User-Agent": "PixivAndroidApp/5.0.155 (Android 10.0; Pixel C)",
+                if (!kIsWeb)
+                  "User-Agent":
+                      "PixivAndroidApp/5.0.155 (Android 10.0; Pixel C)",
                 HttpHeaders.acceptLanguageHeader: Accept_Language,
                 "App-OS": "Android",
                 "App-OS-Version": "Android 10.0",
                 "App-Version": "5.0.166",
-                HttpHeaders.hostHeader: BASE_API_URL_HOST,
+                if (!kIsWeb) HttpHeaders.hostHeader: BASE_API_URL_HOST,
               },
             ),
           )

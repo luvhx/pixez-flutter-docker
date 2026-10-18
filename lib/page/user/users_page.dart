@@ -14,7 +14,8 @@
  *
  */
 
-import 'dart:io';
+import 'package:pixez/net/endpoints.dart';
+import 'package:pixez/platform/io.dart';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -22,7 +23,7 @@ import 'package:dio/dio.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:pixez/platform/dirs.dart';
 import 'package:pixez/component/common_back_area.dart';
 import 'package:pixez/component/null_hero.dart';
 import 'package:pixez/component/painter_avatar.dart';
@@ -440,10 +441,12 @@ class _UsersPageState extends State<UsersPage> with TickerProviderStateMixin {
                             content: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: CachedNetworkImage(
-                                imageUrl: userStore
-                                    .userDetail!
-                                    .profile
-                                    .background_image_url!,
+                                imageUrl: webImageUrl(
+                                  userStore
+                                      .userDetail!
+                                      .profile
+                                      .background_image_url!,
+                                ),
                                 fit: BoxFit.cover,
                                 cacheManager: pixivCacheManager,
                                 httpHeaders: Hoster.header(
@@ -479,8 +482,9 @@ class _UsersPageState extends State<UsersPage> with TickerProviderStateMixin {
                       );
                     },
                     child: CachedNetworkImage(
-                      imageUrl:
+                      imageUrl: webImageUrl(
                           userStore.userDetail!.profile.background_image_url!,
+                      ),
                       fit: BoxFit.fitWidth,
                       cacheManager: pixivCacheManager,
                       httpHeaders: Hoster.header(
@@ -725,7 +729,7 @@ class _UsersPageState extends State<UsersPage> with TickerProviderStateMixin {
                           content: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: CachedNetworkImage(
-                              imageUrl: userStore.user!.profileImageUrls.medium,
+                              imageUrl: webImageUrl(userStore.user!.profileImageUrls.medium),
                               fit: BoxFit.cover,
                               cacheManager: pixivCacheManager,
                               httpHeaders: Hoster.header(

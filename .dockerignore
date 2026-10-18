@@ -1,0 +1,36 @@
+# Ignore everything that is not needed to build the web bundle.
+.git
+.gitignore
+.github
+.idea
+.vscode
+*.iml
+build
+.dart_tool
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Native platform projects are not needed for a web build, except
+# ios/permission_handler_apple_override which is a pubspec dependency_override.
+android
+linux
+macos
+windows
+ohos
+fastlane
+res
+test
+New-MsixCert.ps1
+
+# Keep only the dependency override from the iOS tree.
+ios/.symlinks
+ios/Pods
+ios/Flutter/ephemeral
+ios/Runner/Assets.xcassets
+ios/Runner/*.png
+
+# Deployment files that are not part of the build context.
+docker-compose.yml
+Dockerfile
+.dockerignore
+.env

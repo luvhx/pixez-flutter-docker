@@ -14,7 +14,7 @@
  *
  */
 
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 import 'dart:math';
 
 import 'package:material_ui/material_ui.dart';

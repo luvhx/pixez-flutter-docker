@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 
 import 'package:bot_toast/bot_toast.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pixez/component/pixiv_image.dart';
@@ -25,6 +26,14 @@ class ClipboardPlugin {
   ) async {
     final url = _getImageUrl(illusts, index);
     assert(url != null);
+
+    // Browsers cannot write raw images to the clipboard without a user
+    // gesture / ClipboardItem support, so copy the image URL instead.
+    if (kIsWeb) {
+      await Clipboard.setData(ClipboardData(text: url ?? ''));
+      BotToast.showText(text: I18n.of(context).copied_to_clipboard);
+      return;
+    }
 
     // TODO: i18n
     BotToast.showText(text: 'Copying to clipboard...');

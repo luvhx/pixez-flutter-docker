@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 import 'dart:math';
 
 import 'package:bot_toast/bot_toast.dart';

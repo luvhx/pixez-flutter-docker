@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -8,7 +8,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:pixez/platform/dirs.dart';
 import 'package:pixez/er/hoster.dart';
 import 'package:pixez/er/leader.dart';
 import 'package:pixez/er/lprinter.dart';

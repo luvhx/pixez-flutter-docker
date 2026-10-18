@@ -16,18 +16,17 @@
 
 import 'dart:convert';
 import 'dart:core';
-import 'dart:io';
+import 'package:pixez/platform/io.dart';
 import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:dio_compatibility_layer/dio_compatibility_layer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:pixez/constants.dart';
 import 'package:pixez/crypto_plugin.dart';
 import 'package:pixez/main.dart';
-import 'package:pixez/network/pixez_network_settings.dart';
-import 'package:rhttp/rhttp.dart' as r;
+import 'package:pixez/net/endpoints.dart';
+import 'package:pixez/net/http_adapter.dart';
 
 final OAuthClient oAuthClient = OAuthClient();
 
@@ -54,13 +53,10 @@ class OAuthClient {
   static final String AUTHORIZATION = "Authorization";
 
   Future<Dio> createDioClient() async {
-    final compatibleClient = await r.RhttpCompatibleClient.create(
-      settings: PixezNetworkSettings.forHost(
-        BASE_OAUTH_URL_HOST,
-        userSetting.oauthNetworkMode,
-      ),
+    httpClient.httpClientAdapter = await createApiAdapter(
+      host: BASE_OAUTH_URL_HOST,
+      mode: userSetting.oauthNetworkMode,
     );
-    httpClient.httpClientAdapter = ConversionLayerAdapter(compatibleClient);
     if (Platform.isAndroid) {
       try {
         DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -78,11 +74,12 @@ class OAuthClient {
     String time = getIsoDate();
     httpClient = Dio(
       BaseOptions(
-        baseUrl: 'https://${BASE_OAUTH_URL_HOST}',
+        baseUrl: kOauthBaseUrl,
         headers: {
           "X-Client-Time": time,
           "X-Client-Hash": getHash(time + hashSalt),
-          "User-Agent": "PixivAndroidApp/5.0.155 (Android 6.0; Pixel C)",
+          if (!kIsWeb)
+            "User-Agent": "PixivAndroidApp/5.0.155 (Android 6.0; Pixel C)",
           HttpHeaders.acceptLanguageHeader: "zh-CN",
           "App-OS": "Android",
           "App-OS-Version": "Android 6.0",
