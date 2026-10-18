@@ -30,7 +30,10 @@ ios/Runner/Assets.xcassets
 ios/Runner/*.png
 
 # Deployment files that are not part of the build context.
-docker-compose.yml
+docker-compose*.yml
 Dockerfile
 .dockerignore
-.env
+.env*
+docs
+tool
+*.md

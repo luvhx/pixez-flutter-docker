@@ -59,19 +59,45 @@ docker compose build --no-cache # 完全重新构建
 | Pull Request | 仅构建校验，不推送 | `pr-<编号>` |
 | 手动 `workflow_dispatch` | 可选是否推送 | 同分支/tag 规则 |
 
-镜像地址：
+镜像地址（public，无需登录）：
 
 ```bash
-# 默认私有，需要先登录（PAT 带 read:packages）
-# echo $CR_PAT | docker login ghcr.io -u <你的用户名> --password-stdin
 docker pull ghcr.io/luvhx/pixez-flutter-docker:latest
 docker run -d --name pixez-web -p 8080:80 ghcr.io/luvhx/pixez-flutter-docker:latest
 ```
 
-若希望匿名拉取，在 GitHub 的
-`Packages → pixez-flutter → Package settings` 中把可见性改为 **Public**。
-
 手动触发时还可以指定 Flutter SDK 版本（默认 `3.47.7`）以及是否推送镜像。
+
+### 使用 GHCR 镜像部署（不构建）
+
+仓库自带 `docker-compose.prod.yml`，直接拉取上面的镜像运行，服务器上无需 Flutter
+和编译环境：
+
+```bash
+cp .env.example .env
+docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml up -d
+
+docker compose -f docker-compose.prod.yml ps
+curl -fsS http://127.0.0.1:8080/healthz
+```
+
+更新到最新镜像：
+
+```bash
+docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml up -d
+```
+
+可用 `PIXEZ_IMAGE` 指向镜像站或 fork 的包，用 `PIXEZ_TAG` 固定 tag：
+
+```bash
+PIXEZ_IMAGE=ghcr.io/luvhx/pixez-flutter-docker PIXEZ_TAG=latest \
+  docker compose -f docker-compose.prod.yml up -d
+```
+
+> `docker-compose.yml`（本地构建）与 `docker-compose.prod.yml`（拉取镜像）
+> 使用相同的项目名、容器名和缓存卷，二选一启动即可。
 
 ## 本地构建（不使用 Docker）
 

@@ -1,0 +1,37 @@
+name: pixez
+
+# Deploy the prebuilt image from GitHub Container Registry.
+#
+#   docker compose -f docker-compose.prod.yml pull
+#   docker compose -f docker-compose.prod.yml up -d
+#
+# The image is public, no registry login is required.  Use the same .env
+# variables as the build-based compose file (PIXEZ_PORT, PIXEZ_TAG, TZ).
+# PIXEZ_IMAGE can point at a mirror or a fork's package.
+
+services:
+  pixez-web:
+    image: ${PIXEZ_IMAGE:-ghcr.io/luvhx/pixez-flutter-docker}:${PIXEZ_TAG:-latest}
+    container_name: ${PIXEZ_CONTAINER_NAME:-pixez-web}
+    restart: unless-stopped
+    ports:
+      - "${PIXEZ_PORT:-8080}:80"
+    environment:
+      TZ: ${TZ:-Asia/Shanghai}
+    volumes:
+      # Persist the proxied image cache across restarts.
+      - pixez-cache:/var/cache/nginx
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  pixez-cache:
