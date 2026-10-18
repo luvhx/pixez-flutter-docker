@@ -21,8 +21,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Keep the image name stable even if the repository is renamed.
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/pixez-flutter
+  # Image name follows the repository (pixez-flutter-docker).
+  IMAGE_NAME: ghcr.io/${{ github.repository }}
 
 jobs:
   build:
