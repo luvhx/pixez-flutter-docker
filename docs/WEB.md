@@ -47,6 +47,32 @@ docker compose build --no-cache # 完全重新构建
 镜像大小约为 nginx 基础镜像 + 50 MB 前端产物；Flutter 编译阶段只在构建时
 占用磁盘。
 
+### 自动构建（GitHub Actions）
+
+[`.github/workflows/build_web.yml`](../.github/workflows/build_web.yml) 会在以下时机
+自动构建 Web 镜像并推送到 GitHub Container Registry：
+
+| 触发 | 行为 | 生成的 tag |
+| --- | --- | --- |
+| push 到 `master` | 构建 + 推送 | `master`、`sha-<短哈希>`、`latest` |
+| push `v*` tag | 构建 + 推送 | `1.9.88`、`1.9`、`sha-<短哈希>` |
+| Pull Request | 仅构建校验，不推送 | `pr-<编号>` |
+| 手动 `workflow_dispatch` | 可选是否推送 | 同分支/tag 规则 |
+
+镜像地址：
+
+```bash
+# 默认私有，需要先登录（PAT 带 read:packages）
+# echo $CR_PAT | docker login ghcr.io -u <你的用户名> --password-stdin
+docker pull ghcr.io/luvhx/pixez-flutter:latest
+docker run -d --name pixez-web -p 8080:80 ghcr.io/luvhx/pixez-flutter:latest
+```
+
+若希望匿名拉取，在 GitHub 的
+`Packages → pixez-flutter → Package settings` 中把可见性改为 **Public**。
+
+手动触发时还可以指定 Flutter 版本（例如固定 `3.47.7`）以及是否推送镜像。
+
 ## 本地构建（不使用 Docker）
 
 要求：Flutter stable（Dart ≥ 3.11.5）、Node.js（仅开发用代理脚本）。
