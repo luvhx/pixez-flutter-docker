@@ -51,14 +51,6 @@ function proxy(req, res, prefix, host, referer) {
     origin: '',
     'user-agent': 'PixivAndroidApp/5.0.166 (Android 10.0; Pixel C)',
   };
-  // Same mapping as deploy/nginx.conf: the web app sends the Pixiv token in
-  // X-Pixiv-Authorization so that HTTP Basic Auth can own Authorization.
-  if (headers['x-pixiv-authorization']) {
-    headers.authorization = headers['x-pixiv-authorization'];
-  } else {
-    delete headers.authorization;
-  }
-  delete headers['x-pixiv-authorization'];
   delete headers.connection;
   delete headers['content-length'];
   delete headers['accept-encoding'];

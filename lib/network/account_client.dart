@@ -25,7 +25,7 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:pixez/main.dart';
 import 'package:pixez/models/account.dart';
-import 'package:pixez/net/auth_header.dart';
+import 'package:pixez/network/oauth_client.dart';
 import 'package:pixez/net/endpoints.dart';
 import 'package:pixez/net/http_adapter.dart';
 
@@ -63,7 +63,7 @@ class AccountClient {
       options: Options(
         contentType: Headers.formUrlEncodedContentType,
         headers: {
-          kPixivAuthHeader: "Bearer l-f9qZ0ZyqSwRyZs8-MymbtWBbSxmCu1pmbOlyisou8",
+          "Authorization": "Bearer l-f9qZ0ZyqSwRyZs8-MymbtWBbSxmCu1pmbOlyisou8",
         },
       ),
     );
@@ -92,7 +92,7 @@ class AccountClient {
       options: Options(
         contentType: Headers.formUrlEncodedContentType,
         headers: {
-          kPixivAuthHeader: "Bearer " + accountPersist.accessToken,
+          OAuthClient.AUTHORIZATION: "Bearer " + accountPersist.accessToken,
         },
       ),
     );
