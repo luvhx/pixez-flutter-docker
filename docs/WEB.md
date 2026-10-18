@@ -25,13 +25,13 @@ cd pixez-flutter
 docker compose up -d --build
 ```
 
-打开 <http://localhost:8080>。
+打开 <http://localhost:7493>。
 
 常用环境变量（可写入 `.env`）：
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
-| `PIXEZ_PORT` | `8080` | 宿主机映射端口 |
+| `PIXEZ_PORT` | `7493` | 宿主机映射端口 |
 | `PIXEZ_TAG` | `latest` | 构建出的镜像 tag |
 | `FLUTTER_VERSION` | `3.47.7` | Docker 构建时下载的 Flutter SDK 版本（需满足 Dart ≥ 3.11.5）|
 | `TZ` | `Asia/Shanghai` | 容器时区 |
@@ -63,7 +63,7 @@ docker compose build --no-cache # 完全重新构建
 
 ```bash
 docker pull ghcr.io/luvhx/pixez-flutter-docker:latest
-docker run -d --name pixez-web -p 8080:80 ghcr.io/luvhx/pixez-flutter-docker:latest
+docker run -d --name pixez-web -p 7493:80 ghcr.io/luvhx/pixez-flutter-docker:latest
 ```
 
 手动触发时还可以指定 Flutter SDK 版本（默认 `3.47.7`）以及是否推送镜像。
@@ -79,7 +79,7 @@ docker compose -f docker-compose.prod.yml pull
 docker compose -f docker-compose.prod.yml up -d
 
 docker compose -f docker-compose.prod.yml ps
-curl -fsS http://127.0.0.1:8080/healthz
+curl -fsS http://127.0.0.1:7493/healthz
 ```
 
 更新到最新镜像：

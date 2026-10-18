@@ -65,7 +65,7 @@ Referer / Host 限制），可以用 Docker Compose 一键部署：
 
 ```bash
 docker compose up -d --build
-# 打开 http://localhost:8080
+# 打开 http://localhost:7493
 ```
 
 - 完整说明：[docs/WEB.md](docs/WEB.md)

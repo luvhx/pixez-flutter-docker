@@ -12,7 +12,7 @@ services:
     container_name: ${PIXEZ_CONTAINER_NAME:-pixez-web}
     restart: unless-stopped
     ports:
-      - "${PIXEZ_PORT:-8080}:80"
+      - "${PIXEZ_PORT:-7493}:80"
     environment:
       TZ: ${TZ:-Asia/Shanghai}
     volumes:
