@@ -9,33 +9,10 @@ const String kWebBaseUrl = '/pixiv-web';
 const String kPixivisionBaseUrl = '/pixivision';
 const String kSauceNaoBaseUrl = '/saucenao';
 
-/// Optional custom image host (for example `i.pixiv.re`).  When set, images
-/// are fetched by the browser directly from this host instead of the
-/// same-origin `/pximg` proxy.
-String? webImageHostOverride;
-
-/// Rewrite Pixiv image hosts to the configured host or the proxy.
+/// Rewrite Pixiv image hosts to the same-origin proxy.
 String webImageUrl(String url) {
   final uri = Uri.tryParse(url);
   if (uri == null || uri.host.isEmpty) return url;
-
-  final custom = webImageHostOverride?.trim();
-  if (custom != null && custom.isNotEmpty) {
-    if (uri.host == 'i.pximg.net' || uri.host == 's.pximg.net') {
-      final normalized = custom.contains('://') ? custom : 'https://$custom';
-      final base = Uri.tryParse(normalized);
-      if (base != null && base.host.isNotEmpty) {
-        final prefix = base.path == '/' ? '' : base.path;
-        return base
-            .replace(
-              path: '$prefix${uri.path}',
-              query: uri.hasQuery ? uri.query : null,
-            )
-            .toString();
-      }
-    }
-    return url;
-  }
 
   final prefix = switch (uri.host) {
     'i.pximg.net' => '/pximg',

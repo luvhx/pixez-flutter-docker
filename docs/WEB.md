@@ -13,7 +13,7 @@ Browser ──► nginx :80 ──┬── /              Flutter bundle (build
                         ├── /api/          会话 API（Node 后端）
                         ├── /pixiv-api/    Node 后端 → app-api.pixiv.net（注入 token）
                         ├── /pixiv-oauth/  oauth.secure.pixiv.net
-                        ├── /pximg/        i.pximg.net（代理，可切换为直连图床）
+                        ├── /pximg/        i.pximg.net（服务器代理）
                         ├── /spximg/       s.pximg.net
                         ├── /pixivision/   www.pixivision.net
                         └── /saucenao/     saucenao.com
@@ -52,15 +52,13 @@ docker compose up -d --build
   验证失败不会影响已配置的账号。
 - Refresh Token 可用 `node tool/get_token.js` 获取。
 
-### 图片加载：服务器代理 / 自定义图床
+### 图片加载：服务器代理
 
-默认浏览器通过 `/pximg`、`/spximg` 走服务器代理，兼容性最好。
+浏览器统一通过同源的 `/pximg`、`/spximg` 走服务器代理加载图片。
 
-在 **Preferences → 自定义图床（Web）** 里填写图床域名（如 `i.pixiv.re`）后，
-图片由浏览器直接向该图床请求，不再经过服务器，可节省带宽。
-
-> 直连图床必须返回 CORS 头（`Access-Control-Allow-Origin`），否则图片解码会失败；
-> 留空即可恢复服务器代理。
+`i.pximg.net` 校验 `Referer`（必须是 `https://www.pixiv.net/`），且不返回
+`Access-Control-Allow-Origin`，浏览器既不能伪造 `Referer`，也无法跨域读取图片，
+因此**不能直连**，必须经过本项目的 nginx 反向代理。
 
 其它命令：
 

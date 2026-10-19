@@ -19,7 +19,6 @@ import 'package:pixez/platform/io.dart';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:pixez/net/endpoints.dart';
 import 'package:pixez/app_widget_plugin.dart';
@@ -131,7 +130,6 @@ class _SettingQualityPageState extends State<SettingQualityPage>
                     NetworkPage(automaticallyImplyLeading: true),
                   ),
                 ),
-                if (kIsWeb) _buildWebImageHostTile(context),
                 ListTile(
                   leading: const Icon(Icons.info_outline),
                   title: Text(I18n.of(context).share_info_format),
@@ -465,50 +463,6 @@ class _SettingQualityPageState extends State<SettingQualityPage>
         },
       ),
     );
-  }
-
-  Widget _buildWebImageHostTile(BuildContext context) {
-    final host = webImageHostOverride?.trim();
-    return ListTile(
-      leading: const Icon(Icons.image_outlined),
-      title: const Text('自定义图床（Web）'),
-      subtitle: Text(
-        host == null || host.isEmpty ? '默认：服务器代理 /pximg' : host,
-      ),
-      trailing: const Icon(Icons.edit_outlined),
-      onTap: () => _editWebImageHost(context),
-    );
-  }
-
-  Future<void> _editWebImageHost(BuildContext context) async {
-    final controller = TextEditingController(text: webImageHostOverride ?? '');
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('自定义图床'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            hintText: 'i.pixiv.re',
-            helperText: '留空使用服务器代理；图床需允许跨域（CORS）',
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('取消'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(controller.text),
-            child: const Text('保存'),
-          ),
-        ],
-      ),
-    );
-    if (result != null) {
-      await userSetting.setWebImageHost(result);
-      setState(() {});
-    }
   }
 
   Widget _buildLanguageSelect() {

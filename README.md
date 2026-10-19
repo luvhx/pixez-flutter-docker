@@ -73,7 +73,7 @@ docker compose up -d --build
 - 本地构建：`./tool/build_web.sh`
 - 登录状态保存在服务端：`/login` 配置一次共享 Pixiv 账号，浏览器只持有会话 Cookie
 - Refresh Token 可用 `node tool/get_token.js` 获取
-- 图片默认走服务器代理，可在设置里切换为自定义图床直连
+- 图片统一走服务器代理（`/pximg`、`/spximg`），无需也无法由浏览器直连
 - 端口、时区、Flutter 版本等可通过环境变量或 `.env` 调整
 - CI 自动构建镜像：push 到 `master` 后发布 `ghcr.io/luvhx/pixez-flutter-docker:latest`
 - 直接使用已发布镜像部署（无需构建）：
