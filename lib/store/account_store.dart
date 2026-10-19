@@ -14,7 +14,10 @@
  *
  */
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:mobx/mobx.dart';
+import 'package:pixez/net/backend_session.dart';
+import 'package:pixez/platform/web_nav.dart';
 import 'package:pixez/er/prefer.dart';
 import 'package:pixez/models/account.dart';
 
@@ -42,6 +45,11 @@ abstract class _AccountStoreBase with Store {
 
   @action
   deleteAll() async {
+    if (kIsWeb) {
+      await BackendSession.logout();
+      webRedirect('/login');
+      return;
+    }
     await accountProvider.open();
     await accountProvider.deleteAll();
     now = null;
@@ -65,6 +73,33 @@ abstract class _AccountStoreBase with Store {
   Future<void> fetch() async {
     feching = true;
     try {
+      if (kIsWeb) {
+        final user = BackendSession.user;
+        accounts.clear();
+        if (user != null) {
+          final persist = AccountPersist(
+            userId: user['id']?.toString() ?? '',
+            userImage: user['profileImageUrl']?.toString() ?? '',
+            accessToken: '',
+            refreshToken: '',
+            deviceToken: '',
+            passWord: '',
+            name: user['name']?.toString() ?? '',
+            account: user['account']?.toString() ?? '',
+            mailAddress: user['mailAddress']?.toString() ?? '',
+            isPremium: user['isPremium'] == true ? 1 : 0,
+            xRestrict: (user['xRestrict'] as num?)?.toInt() ?? 0,
+            isMailAuthorized: user['isMailAuthorized'] == true ? 1 : 0,
+          );
+          accounts.add(persist);
+          now = persist;
+          index = 0;
+        } else {
+          now = null;
+        }
+        feching = false;
+        return;
+      }
       await accountProvider.open();
       List<AccountPersist> list = await accountProvider.getAllAccount();
       accounts.clear();

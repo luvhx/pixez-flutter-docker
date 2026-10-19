@@ -11,9 +11,9 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '../build/web');
 const PORT = Number(process.env.PORT || 8099);
+const API_PORT = Number(process.env.PIXEZ_API_PORT || 8080);
 
 const PROXIES = [
-  ['/pixiv-api', 'app-api.pixiv.net', 'https://www.pixiv.net/'],
   ['/pixiv-oauth', 'oauth.secure.pixiv.net', 'https://www.pixiv.net/'],
   ['/pixiv-accounts', 'accounts.pixiv.net', 'https://www.pixiv.net/'],
   ['/pixiv-web', 'www.pixiv.net', 'https://www.pixiv.net/'],
@@ -77,8 +77,33 @@ function proxy(req, res, prefix, host, referer) {
   req.pipe(upstream);
 }
 
+function proxyToApi(req, res) {
+  const headers = { ...req.headers, host: `127.0.0.1:${API_PORT}` };
+  delete headers.connection;
+  const upstream = http.request(
+    { host: '127.0.0.1', port: API_PORT, path: req.url, method: req.method, headers },
+    (up) => {
+      res.writeHead(up.statusCode || 502, up.headers);
+      up.pipe(res);
+    },
+  );
+  upstream.on('error', (e) => {
+    res.writeHead(502, { 'content-type': 'text/plain' });
+    res.end('api error: ' + e.message);
+  });
+  req.pipe(upstream);
+}
+
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://localhost');
+  if (
+    url.pathname === '/login' ||
+    url.pathname.startsWith('/api/') ||
+    url.pathname.startsWith('/pixiv-api/')
+  ) {
+    proxyToApi(req, res);
+    return;
+  }
   const match = PROXIES.find(([prefix]) => url.pathname.startsWith(prefix + '/'));
   if (match) {
     proxy(req, res, match[0], match[1], match[2]);

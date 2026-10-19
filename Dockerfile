@@ -65,10 +65,18 @@ RUN flutter build web \
 # ---------------------------------------------------------------------------
 FROM nginx:1.27-alpine AS runtime
 
+# Node runs the session backend (Pixiv token stays server side).
+RUN apk add --no-cache nodejs
+
 RUN rm -f /etc/nginx/conf.d/default.conf
 
 COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
 COPY deploy/00-cache.conf /etc/nginx/conf.d/00-cache.conf
+
+COPY server /app/server
+COPY --chmod=755 deploy/start-api.sh /docker-entrypoint.d/50-pixez-api.sh
+
+ENV PIXEZ_STATE_FILE=/data/state.json
 
 COPY --from=build /app/build/web /usr/share/nginx/html
 

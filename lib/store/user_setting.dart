@@ -27,6 +27,7 @@ import 'package:pixez/er/hoster.dart';
 import 'package:pixez/er/prefer.dart';
 import 'package:pixez/main.dart';
 import 'package:pixez/models/illust.dart';
+import 'package:pixez/net/endpoints.dart';
 import 'package:pixez/network/api_client.dart';
 import 'package:pixez/network/network_mode.dart';
 import 'package:pixez/network/oauth_client.dart';
@@ -548,6 +549,7 @@ abstract class _UserSetting with Store {
   @action
   Future<void> init() async {
     prefs = await Prefer.getInstance();
+    webImageHostOverride = prefs.getString('web_image_host');
     zoomQuality = prefs.getInt(ZOOM_QUALITY_KEY) ?? 0;
     feedPreviewQuality = prefs.getInt(FEED_PREVIEW_QUALITY) ?? 0;
     singleFolder = prefs.getBool(SINGLE_FOLDER_KEY) ?? false;
@@ -599,6 +601,12 @@ abstract class _UserSetting with Store {
     }
     format = prefs.getString(SAVE_FORMAT_KEY);
     if (format == null || format!.isEmpty) format = intialFormat;
+  }
+
+  Future<void> setWebImageHost(String value) async {
+    final host = value.trim();
+    webImageHostOverride = host.isEmpty ? null : host;
+    await prefs.setString('web_image_host', host);
   }
 
   int toRealLanguageNum(int num) {

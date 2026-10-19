@@ -30,6 +30,8 @@ import 'package:pixez/er/fetcher.dart';
 import 'package:pixez/er/illust_cacher.dart';
 import 'package:pixez/fluent/fluentui.dart'
     if (dart.library.js_interop) 'package:pixez/fluent/fluentui_stub.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:pixez/net/backend_session.dart';
 import 'package:pixez/net/http_adapter.dart';
 import 'package:pixez/i18n.dart';
 import 'package:pixez/page/novel/history/novel_history_store.dart';
@@ -46,6 +48,7 @@ import 'package:pixez/store/top_store.dart';
 import 'package:pixez/store/user_setting.dart';
 import 'package:pixez/single_instance_plugin.dart';
 import 'package:pixez/platform/storage_init.dart';
+import 'package:pixez/platform/web_nav.dart';
 
 final RouteObserver<ModalRoute<void>> routeObserver =
     RouteObserver<ModalRoute<void>>();
@@ -66,6 +69,17 @@ main(List<String> args) async {
   await initNetworkEngine();
   await MmapCache.init();
   await initPlatformStorage();
+
+  // The web build is gated by the backend session; unauthenticated visitors
+  // are sent to the standalone login page.
+  if (kIsWeb) {
+    final authenticated = await BackendSession.load();
+    if (!authenticated) {
+      webRedirect('/login');
+      return;
+    }
+  }
+
   await initFluent(args);
 
   runApp(ProviderScope(child: MyApp(arguments: args)));

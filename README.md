@@ -64,13 +64,16 @@
 Referer / Host 限制），可以用 Docker Compose 一键部署：
 
 ```bash
+cp .env.example .env        # 设置 PIXEZ_SETUP_TOKEN
 docker compose up -d --build
-# 打开 http://localhost:7493
+# 打开 http://localhost:7493 -> /login 配置 Pixiv Refresh Token
 ```
 
 - 完整说明：[docs/WEB.md](docs/WEB.md)
 - 本地构建：`./tool/build_web.sh`
-- Web 端登录使用 Refresh Token，可用 `node tool/get_token.js` 获取
+- 登录状态保存在服务端：`/login` 配置一次共享 Pixiv 账号，浏览器只持有会话 Cookie
+- Refresh Token 可用 `node tool/get_token.js` 获取
+- 图片默认走服务器代理，可在设置里切换为自定义图床直连
 - 端口、时区、Flutter 版本等可通过环境变量或 `.env` 调整
 - CI 自动构建镜像：push 到 `master` 后发布 `ghcr.io/luvhx/pixez-flutter-docker:latest`
 - 直接使用已发布镜像部署（无需构建）：

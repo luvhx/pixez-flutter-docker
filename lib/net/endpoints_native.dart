@@ -11,6 +11,9 @@ const String kSauceNaoBaseUrl = 'https://saucenao.com';
 /// Native builds keep absolute image URLs.
 String webImageUrl(String url) => url;
 
+/// Web-only custom image host setting; unused on native builds.
+String? webImageHostOverride;
+
 /// Web only: rewrite `www.pixiv.net` links.
 String webPageUrl(String url) => url;
 

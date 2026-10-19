@@ -15,6 +15,7 @@
  */
 
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:dio/dio.dart';
 import 'package:pixez/main.dart';
 import 'package:pixez/models/account.dart';
@@ -41,6 +42,8 @@ class RefreshTokenInterceptor extends QueuedInterceptorsWrapper {
   @override
   Future<void> onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
+    // The web backend injects the Bearer token; the browser holds no token.
+    if (kIsWeb) return handler.next(options);
     if (!options.path.contains('v1/walkthrough/illusts')) {
       options.headers[OAuthClient.AUTHORIZATION] = await getToken();
       if (options.headers[OAuthClient.AUTHORIZATION] == null) {
@@ -70,6 +73,7 @@ class RefreshTokenInterceptor extends QueuedInterceptorsWrapper {
 
   @override
   void onError(DioException err, handler) async {
+    if (kIsWeb) return handler.next(err);
     if (err.response != null && err.response!.statusCode == 400) {
       DateTime dateTime = DateTime.now();
       if ((dateTime.millisecondsSinceEpoch - lastRefreshTime) > 200000) {

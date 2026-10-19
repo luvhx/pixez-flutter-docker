@@ -15,9 +15,13 @@ services:
       - "${PIXEZ_PORT:-7493}:80"
     environment:
       TZ: ${TZ:-Asia/Shanghai}
+      PIXEZ_SETUP_TOKEN: ${PIXEZ_SETUP_TOKEN:?set PIXEZ_SETUP_TOKEN in .env}
+      PIXEZ_STATE_FILE: /data/state.json
     volumes:
       # Persist the proxied image cache across restarts.
       - pixez-cache:/var/cache/nginx
+      # Pixiv session (refresh/access token) lives here.
+      - pixez-state:/data
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
       interval: 30s
@@ -32,3 +36,4 @@ services:
 
 volumes:
   pixez-cache:
+  pixez-state:
